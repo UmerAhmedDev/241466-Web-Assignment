@@ -8,16 +8,14 @@ Registration ID: 241466
     npm install
     npm run dev
 
-## CSR vs SSR
+## Task 6: Theoretical Analysis: CSR vs. SSR
 
-In CSR, which a Vite and React app uses, the server sends an almost empty HTML page and a big JavaScript file. The browser downloads the JavaScript, runs it, and builds the page on the user's device. So the first screen shows only after the JavaScript is ready. The server does very little work because it only sends static files.
+**Initial load and execution.** In a standard Vite + React app, the server does very little. It hands the browser a nearly empty index.html and a JavaScript bundle, and the browser does everything else: downloading the bundle, running React, fetching data and building the DOM. Until that finishes, the user sees a blank page or a spinner. With SSR in Next.js, the server runs React on each request, fetches the data and sends back finished HTML. The user sees real content almost immediately, though buttons only work after hydration finishes.
 
-In SSR, which Next.js uses, the server runs React for every request and builds the full HTML page. The browser gets a page that already has content, so it shows quickly. Then React loads in the browser and makes the page work. This step is called hydration. So the server does real work for every visitor.
+**Performance.** CSR pays its cost up front. The first load is slower, especially on weak phones, but after that every filter, search or stock update happens in the browser without asking the server for a new page. SSR gives a faster first paint, but each request uses server time, and a slow database query delays the whole page.
 
-For performance, CSR has a slower first load, especially on weak phones or slow internet, because the user waits for JavaScript. After that, moving between pages is fast and smooth. SSR shows the first screen faster, but a busy server can slow down the response.
+**SEO.** SSR hands crawlers complete HTML, which matters for public storefronts. CSR depends on the crawler running JavaScript, which is less reliable. For this dashboard it barely matters, since inventory pages sit behind a login.
 
-For SEO, search engines read the ready HTML of an SSR page easily. A CSR page is harder to read because the content appears only after JavaScript runs. For an online store, good SEO matters because shoppers find products through search.
+**Hosting.** A CSR build is just static files. Vercel or Netlify can serve them from a CDN for almost nothing, with no server to look after. SSR needs a Node runtime or serverless functions, which means higher cost, more scaling work and more things to break.
 
-For hosting, CSR is cheap and simple because any static host or CDN can serve it. SSR needs a running server, which costs more and is harder to scale.
-
-Our inventory dashboard is a private page for staff, so SEO does not matter and CSR is a good choice. A public product store would fit SSR better.
+**Verdict.** CSR is the sensible choice here. SSR would only make sense if we added public product pages that need to rank in search.
